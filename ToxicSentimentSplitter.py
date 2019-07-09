@@ -76,26 +76,61 @@ csv.register_dialect('this_projects_dialect',
                      lineterminator=file_eol_char)
 
 rows_read = 0
-with open(toxic_file_path, 'w', newline='', encoding=file_encoding) as toxic_file:
-    toxic_writer = csv.DictWriter(toxic_file, fieldnames=target_field_names, dialect='this_projects_dialect')
+with open(toxic_file_path,
+          'w',
+          newline='',
+          encoding=file_encoding) as toxic_file:
+    toxic_writer = csv.DictWriter(toxic_file,
+                                  fieldnames=target_field_names,
+                                  dialect='this_projects_dialect')
     toxic_writer.writeheader()
-    with open(severe_toxic_file_path, 'w', newline='', encoding=file_encoding) as severe_toxic_file:
-        severe_toxic_writer = csv.DictWriter(severe_toxic_file, fieldnames=target_field_names, dialect='this_projects_dialect')
+    with open(severe_toxic_file_path,
+              'w',
+              newline='',
+              encoding=file_encoding) as severe_toxic_file:
+        severe_toxic_writer = csv.DictWriter(severe_toxic_file,
+                                             fieldnames=target_field_names,
+                                             dialect='this_projects_dialect')
         severe_toxic_writer.writeheader()
-        with open(obscene_file_path, 'w', newline='', encoding=file_encoding) as obscene_file:
-            obscene_writer = csv.DictWriter(obscene_file, fieldnames=target_field_names, dialect='this_projects_dialect')
+        with open(obscene_file_path,
+                  'w',
+                  newline='',
+                  encoding=file_encoding) as obscene_file:
+            obscene_writer = csv.DictWriter(obscene_file,
+                                            fieldnames=target_field_names,
+                                            dialect='this_projects_dialect')
             obscene_writer.writeheader()
-            with open(threat_file_path, 'w', newline='', encoding=file_encoding) as threat_file:
-                threat_writer = csv.DictWriter(threat_file, fieldnames=target_field_names, dialect='this_projects_dialect')
+            with open(threat_file_path,
+                      'w', newline='',
+                      encoding=file_encoding) as threat_file:
+                threat_writer = csv.DictWriter(threat_file,
+                                               fieldnames=target_field_names,
+                                               dialect='this_projects_dialect')
                 threat_writer.writeheader()
-                with open(insult_file_path, 'w', newline='', encoding=file_encoding) as insult_file:
-                    insult_writer = csv.DictWriter(insult_file, fieldnames=target_field_names, dialect='this_projects_dialect')
+                with open(insult_file_path,
+                          'w',
+                          newline='',
+                          encoding=file_encoding) as insult_file:
+                    insult_writer = csv.DictWriter(insult_file,
+                                                   fieldnames=target_field_names,
+                                                   dialect='this_projects_dialect')
                     insult_writer.writeheader()
-                    with open(identity_hate_file_path, 'w', newline='', encoding=file_encoding) as identity_hate_file:
-                        identity_hate_writer = csv.DictWriter(identity_hate_file, fieldnames=target_field_names, dialect='this_projects_dialect')
+                    with open(identity_hate_file_path,
+                              'w',
+                              newline='',
+                              encoding=file_encoding) as identity_hate_file:
+                        identity_hate_writer = csv.DictWriter(identity_hate_file,
+                                                              fieldnames=target_field_names,
+                                                              dialect='this_projects_dialect')
                         identity_hate_writer.writeheader()
-                        with open(source_file_path, 'r', newline='', encoding=file_encoding) as src_file:
-                            src_reader = csv.DictReader(src_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                        with open(source_file_path,
+                                  'r',
+                                  newline='',
+                                  encoding=file_encoding) as src_file:
+                            src_reader = csv.DictReader(src_file,
+                                                        delimiter=',',
+                                                        quotechar='"',
+                                                        quoting=csv.QUOTE_MINIMAL)
                             for src_row in src_reader:
                                 tgt_text = src_row['comment_text'].replace(file_eol_char, ' ')
                                 tgt_text = cleanse_text(tgt_text)
