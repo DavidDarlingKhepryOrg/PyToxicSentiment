@@ -1,3 +1,9 @@
+"""
+Reference articles for this script:
+* https://www.analyticsvidhya.com/blog/2018/02/natural-language-processing-for-beginners-using-textblob/
+* https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/
+"""
+
 import csv
 
 max_rows = 0  # 0 means unlimited
@@ -5,8 +11,6 @@ max_rows = 0  # 0 means unlimited
 file_encoding = 'utf-8'
 file_eol_char = '\n'
 rows_to_flush = 10000
-stats_to_flush = 100000
-words_to_flush = 100000
 
 source_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/train.csv'
 toxic_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/train_toxic.csv'
@@ -52,7 +56,7 @@ def replace_chars(src_str, pat_chars='  ', rpl_chars=' '):
 # allowing single spaces as the exception
 def cleanse_text(src_str):
     tmp_str_1 = src_str\
-        .replace("\n", ' ')\
+        .replace(file_eol_char, ' ')\
         .replace('-', ' ')\
         .replace('_', ' ')
     tmp_str_1 = replace_chars(tmp_str_1, '  ', ' ')
@@ -69,7 +73,7 @@ csv.register_dialect('this_projects_dialect',
                      delimiter=',',
                      quotechar='"',
                      quoting=csv.QUOTE_MINIMAL,
-                     lineterminator='\n')
+                     lineterminator=file_eol_char)
 
 rows_read = 0
 with open(toxic_file_path, 'w', newline='', encoding=file_encoding) as toxic_file:
@@ -93,7 +97,7 @@ with open(toxic_file_path, 'w', newline='', encoding=file_encoding) as toxic_fil
                         with open(source_file_path, 'r', newline='', encoding=file_encoding) as src_file:
                             src_reader = csv.DictReader(src_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                             for src_row in src_reader:
-                                tgt_text = src_row['comment_text'].replace('\n', ' ')
+                                tgt_text = src_row['comment_text'].replace(file_eol_char, ' ')
                                 tgt_text = cleanse_text(tgt_text)
                                 if tgt_text != '':
                                     tgt_row = {'id': src_row['id'], 'comment_text': tgt_text}
