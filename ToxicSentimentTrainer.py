@@ -35,8 +35,8 @@ training_files = {
 
 trainer_field_names = [
     "id",
-    "comment_text",
-    "sentiment"
+    "sentiment",
+    "comment_text"
 ]
 
 csv.register_dialect('this_projects_dialect',
@@ -63,8 +63,11 @@ for key, training_file_path in training_files.items():
         rows = []
         for row in csv_dict_reader:
             rows_read += 1
-            if row['sentiment'] == 'neg':
+            if row['sentiment'] in ['neg', 'pos']:
                 rows_used += 1
+                # create a text, sentiment tuple
+                # and append it to the rows to
+                # be used to update the classifier
                 rows.append((row['comment_text'], row['sentiment']))
                 if rows_used % rows_per_batch == 0:
                     if first_batch:
@@ -78,10 +81,12 @@ for key, training_file_path in training_files.items():
                         first_batch = False
                     else:
                         classifier.update(rows)
+                        print(f'classifier.accuracy: {classifier.accuracy(rows)}')
                     rows.clear()
-                    print(f'{key} {classifier_type} classifier updated, rows_read: {rows_read:,}, rows_used: {rows_used:,}')
+                    msg = f'{key} {classifier_type} classifier updated, rows read, used: {rows_read:,}, {rows_used:,}'
+                    print(msg)
 
-            if max_rows_used > 0 and rows_used >= max_rows_used:
+            if rows_used >= max_rows_used > 0:
                 break
 
         print(f'{key} {classifier_type} classifier updated, rows_read: {rows_read:,}, rows_used: {rows_used:,}')
@@ -92,4 +97,3 @@ for key, training_file_path in training_files.items():
         pickle.dump(classifier, pickle_file, protocol=pickle.HIGHEST_PROTOCOL, fix_imports=False)
     print(f'Pickling of {key} {classifier_type} classifier finished')
     print('========================================================')
-
