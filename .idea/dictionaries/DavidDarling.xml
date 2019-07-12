@@ -1,8 +1,22 @@
 <component name="ProjectDictionaryState">
   <dictionary name="DavidDarling">
     <words>
+      <w>bestwords</w>
+      <w>bigram</w>
+      <w>bigrams</w>
+      <w>featx</w>
       <w>kaggle</w>
+      <w>negcutoff</w>
+      <w>negfeats</w>
+      <w>negids</w>
+      <w>poscutoff</w>
+      <w>posfeats</w>
+      <w>posids</w>
+      <w>refsets</w>
       <w>regexs</w>
+      <w>testfeats</w>
+      <w>testsets</w>
+      <w>trainfeats</w>
     </words>
   </dictionary>
 </component>
