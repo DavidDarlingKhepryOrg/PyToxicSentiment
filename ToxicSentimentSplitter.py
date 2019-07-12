@@ -1,4 +1,6 @@
 """
+ToxicSentimentSplitter.py
+
 Reference articles for this script:
 * https://www.analyticsvidhya.com/blog/2018/02/natural-language-processing-for-beginners-using-textblob/
 * https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/
@@ -7,6 +9,7 @@ Reference articles for this script:
 import csv
 import re
 from nltk.corpus import stopwords
+from textblob import TextBlob
 
 max_rows = 0  # 0 means unlimited
 
@@ -22,6 +25,13 @@ train_obscene_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/train_o
 train_threat_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/train_threat.csv'
 train_insult_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/train_insult.csv'
 train_identity_hate_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/train_identity_hate.csv'
+
+sentence_toxic_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/sentence_toxic.csv'
+sentence_severe_toxic_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/sentence_severe_toxic.csv'
+sentence_obscene_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/sentence_obscene.csv'
+sentence_threat_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/sentence_threat.csv'
+sentence_insult_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/sentence_insult.csv'
+sentence_identity_hate_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/sentence_identity_hate.csv'
 
 accuracy_toxic_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/accuracy_toxic.csv'
 accuracy_severe_toxic_file_path = 'F:/Kaggle/ToxicCommentClassificationChallenge/accuracy_severe_toxic.csv'
@@ -43,8 +53,8 @@ source_field_names = [
 
 target_field_names = [
     "id",
-    "sentiment",
-    "comment_text"
+    "comment_text",
+    "sentiment"
 ]
 
 accuracy_field_names = [
@@ -167,7 +177,7 @@ with open(train_toxic_file_path,
                                                         quoting=csv.QUOTE_MINIMAL)
                             for src_row in src_reader:
                                 tgt_text = src_row['comment_text'].replace(file_eol_char, ' ')
-                                tgt_text = cleanse_text(tgt_text)
+                                # tgt_text = cleanse_text(tgt_text)
                                 if tgt_text != '':
                                     tgt_row = dict()
                                     tgt_row['id'] = src_row['id']
@@ -192,6 +202,99 @@ with open(train_toxic_file_path,
                                     train_threat_file.flush()
                                     train_insult_file.flush()
                                     train_identity_hate_file.flush()
+                                    print(f'rows_read: {rows_read:,}')
+
+                                if rows_read >= max_rows > 0:
+                                    break
+
+print(f'rows_read: {rows_read:,}')
+
+rows_read = 0
+with open(sentence_toxic_file_path,
+          'w',
+          newline='',
+          encoding=file_encoding) as sentence_toxic_file:
+    sentence_toxic_writer = csv.DictWriter(sentence_toxic_file,
+                                           fieldnames=target_field_names,
+                                           dialect='this_projects_dialect')
+    sentence_toxic_writer.writeheader()
+    with open(sentence_severe_toxic_file_path,
+              'w',
+              newline='',
+              encoding=file_encoding) as sentence_severe_toxic_file:
+        sentence_severe_toxic_writer = csv.DictWriter(sentence_severe_toxic_file,
+                                                      fieldnames=target_field_names,
+                                                      dialect='this_projects_dialect')
+        sentence_severe_toxic_writer.writeheader()
+        with open(sentence_obscene_file_path,
+                  'w',
+                  newline='',
+                  encoding=file_encoding) as sentence_obscene_file:
+            sentence_obscene_writer = csv.DictWriter(sentence_obscene_file,
+                                                     fieldnames=target_field_names,
+                                                     dialect='this_projects_dialect')
+            sentence_obscene_writer.writeheader()
+            with open(sentence_threat_file_path,
+                      'w', newline='',
+                      encoding=file_encoding) as sentence_threat_file:
+                sentence_threat_writer = csv.DictWriter(sentence_threat_file,
+                                                        fieldnames=target_field_names,
+                                                        dialect='this_projects_dialect')
+                sentence_threat_writer.writeheader()
+                with open(sentence_insult_file_path,
+                          'w',
+                          newline='',
+                          encoding=file_encoding) as sentence_insult_file:
+                    sentence_insult_writer = csv.DictWriter(sentence_insult_file,
+                                                            fieldnames=target_field_names,
+                                                            dialect='this_projects_dialect')
+                    sentence_insult_writer.writeheader()
+                    with open(sentence_identity_hate_file_path,
+                              'w',
+                              newline='',
+                              encoding=file_encoding) as sentence_identity_hate_file:
+                        sentence_identity_hate_writer = csv.DictWriter(sentence_identity_hate_file,
+                                                                       fieldnames=target_field_names,
+                                                                       dialect='this_projects_dialect')
+                        sentence_identity_hate_writer.writeheader()
+                        with open(source_file_path,
+                                  'r',
+                                  newline='',
+                                  encoding=file_encoding) as src_file:
+                            src_reader = csv.DictReader(src_file,
+                                                        delimiter=',',
+                                                        quotechar='"',
+                                                        quoting=csv.QUOTE_MINIMAL)
+                            for src_row in src_reader:
+                                tgt_text = src_row['comment_text'].replace(file_eol_char, ' ')
+                                text_blob = TextBlob(tgt_text)
+                                for sentence in text_blob.sentences:
+                                    # tgt_text = cleanse_text(tgt_text)
+                                    sentence = sentence.strip()
+                                    if sentence != '':
+                                        tgt_row = dict()
+                                        tgt_row['id'] = src_row['id']
+                                        tgt_row['comment_text'] = sentence
+                                        tgt_row['sentiment'] = pos_neg_dict[src_row['toxic']]
+                                        sentence_toxic_writer.writerow(tgt_row)
+                                        tgt_row['sentiment'] = pos_neg_dict[src_row['severe_toxic']]
+                                        sentence_severe_toxic_writer.writerow(tgt_row)
+                                        tgt_row['sentiment'] = pos_neg_dict[src_row['obscene']]
+                                        sentence_obscene_writer.writerow(tgt_row)
+                                        tgt_row['sentiment'] = pos_neg_dict[src_row['threat']]
+                                        sentence_threat_writer.writerow(tgt_row)
+                                        tgt_row['sentiment'] = pos_neg_dict[src_row['insult']]
+                                        sentence_insult_writer.writerow(tgt_row)
+                                        tgt_row['sentiment'] = pos_neg_dict[src_row['identity_hate']]
+                                        sentence_identity_hate_writer.writerow(tgt_row)
+                                rows_read += 1
+                                if rows_read % rows_to_flush == 0:
+                                    sentence_toxic_file.flush()
+                                    sentence_severe_toxic_file.flush()
+                                    sentence_obscene_file.flush()
+                                    sentence_threat_file.flush()
+                                    sentence_insult_file.flush()
+                                    sentence_identity_hate_file.flush()
                                     print(f'rows_read: {rows_read:,}')
 
                                 if rows_read >= max_rows > 0:
@@ -257,7 +360,7 @@ with open(accuracy_toxic_file_path,
                                                         quoting=csv.QUOTE_MINIMAL)
                             for src_row in src_reader:
                                 tgt_text = src_row['comment_text'].replace(file_eol_char, ' ')
-                                tgt_text = cleanse_text(tgt_text)
+                                # tgt_text = cleanse_text(tgt_text)
                                 if tgt_text != '':
                                     tgt_row = dict()
                                     tgt_row['comment_text'] = tgt_text

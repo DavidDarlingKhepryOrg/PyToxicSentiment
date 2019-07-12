@@ -1,5 +1,5 @@
 """
-ToxicSentimentOptimizer.py
+ToxicSentimentSentencer.py
 """
 
 import csv
@@ -33,7 +33,7 @@ training_files = {
     'positive_words': f'{src_folder}/positive_words_sorted.txt'
 }
 
-use_train_files_list = ['bad_words', 'toxic']
+use_train_files_list = ['toxic']
 use_test_files_list = ['toxic']
 
 trainer_field_names = [
